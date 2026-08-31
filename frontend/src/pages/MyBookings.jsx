@@ -57,12 +57,15 @@ export default function MyBookings() {
                 {b.status === 'pending' && (
                   <Link to={`/bookings/${b.id}/pay`}><button className="sm">Pay</button></Link>
                 )}
+                {b.status === 'expired' && (
+                  <Link to="/"><button className="sm ghost">Book again</button></Link>
+                )}
                 {b.status === 'confirmed' && (
                   <button className="sm ghost" onClick={() => downloadTicket(b.id).catch((e) => setError(e.message))}>
                     E-ticket
                   </button>
                 )}
-                {b.status !== 'cancelled' && upcoming && (
+                {b.status !== 'cancelled' && b.status !== 'expired' && upcoming && (
                   <button className="sm danger" disabled={busy === b.id} onClick={() => cancel(b.id)}>
                     Cancel
                   </button>

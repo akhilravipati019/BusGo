@@ -81,6 +81,7 @@ body {
   .pill.confirmed { @apply bg-green-100 text-ok; }
   .pill.pending   { @apply bg-yellow-100 text-yellow-700; }
   .pill.cancelled { @apply bg-red-100 text-danger; }
+  .pill.expired   { @apply bg-slate-200 text-slate-500; }
 }
 
 /* ---- seat map (custom) ---- */

@@ -33,6 +33,18 @@ export default function Payment() {
   if (error) return <div className="container"><p className="error">{error}</p></div>;
   if (!booking) return <div className="container">Loading…</div>;
 
+  if (booking.status === 'expired') {
+    return (
+      <div className="container">
+        <h1>Payment</h1>
+        <div className="card">
+          <p className="error">This seat hold expired before payment. Please book again.</p>
+          <button onClick={() => navigate('/')}>Search buses</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container">
       <h1>Payment</h1>

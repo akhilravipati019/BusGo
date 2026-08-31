@@ -1,6 +1,15 @@
 import { Router } from 'express';
 import { supabase } from '../supabase.js';
 import { verifyUser, requireAdmin } from '../middleware/auth.js';
+import { effectiveStatus, seatIsLive } from '../lib/holds.js';
+
+async function soldSeats(scheduleId) {
+  const { data } = await supabase
+    .from('booking_seats')
+    .select('id, bookings ( status, created_at )')
+    .eq('schedule_id', scheduleId);
+  return (data || []).filter((row) => seatIsLive(row.bookings)).length;
+}
 
 const router = Router();
 router.use(verifyUser, requireAdmin);
@@ -63,11 +72,9 @@ router.get('/schedules', async (req, res, next) => {
     const { data, error } = await q;
     if (error) throw error;
 
-    const withSold = await Promise.all((data || []).map(async (s) => {
-      const { count } = await supabase
-        .from('booking_seats').select('id', { count: 'exact', head: true }).eq('schedule_id', s.id);
-      return { ...s, seats_sold: count || 0 };
-    }));
+    const withSold = await Promise.all((data || []).map(async (s) => ({
+      ...s, seats_sold: await soldSeats(s.id),
+    })));
     res.json(withSold);
   } catch (e) { next(e); }
 });
@@ -120,7 +127,7 @@ router.get('/bookings', async (req, res, next) => {
     if (req.query.date) {
       rows = rows.filter((b) => b.schedules?.departure_at?.slice(0, 10) === req.query.date);
     }
-    res.json(rows);
+    res.json(rows.map((b) => ({ ...b, status: effectiveStatus(b) })));
   } catch (e) { next(e); }
 });
 
@@ -136,11 +143,9 @@ router.get('/buses/:id/overview', async (req, res, next) => {
       .order('departure_at');
     if (sErr) throw sErr;
 
-    const withLoad = await Promise.all((schedules || []).map(async (s) => {
-      const { count } = await supabase
-        .from('booking_seats').select('id', { count: 'exact', head: true }).eq('schedule_id', s.id);
-      return { ...s, seats_sold: count || 0, seats_total: bus.total_seats };
-    }));
+    const withLoad = await Promise.all((schedules || []).map(async (s) => ({
+      ...s, seats_sold: await soldSeats(s.id), seats_total: bus.total_seats,
+    })));
 
     res.json({ bus, schedules: withLoad });
   } catch (e) { next(e); }

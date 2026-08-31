@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { supabase } from '../supabase.js';
+import { seatIsLive } from '../lib/holds.js';
 
 const router = Router();
 
@@ -41,11 +42,12 @@ router.get('/search', async (req, res, next) => {
 
     const withCounts = await Promise.all(
       filtered.map(async (s) => {
-        const { count } = await supabase
+        const { data: seats } = await supabase
           .from('booking_seats')
-          .select('id', { count: 'exact', head: true })
+          .select('id, bookings ( status, created_at )')
           .eq('schedule_id', s.id);
-        return { ...s, seats_left: (s.buses?.total_seats || 0) - (count || 0) };
+        const held = (seats || []).filter((row) => seatIsLive(row.bookings)).length;
+        return { ...s, seats_left: (s.buses?.total_seats || 0) - held };
       })
     );
 
@@ -66,14 +68,14 @@ router.get('/:id/seats', async (req, res, next) => {
 
     const { data: taken, error: tErr } = await supabase
       .from('booking_seats')
-      .select('seat_no')
+      .select('seat_no, bookings ( status, created_at )')
       .eq('schedule_id', req.params.id);
     if (tErr) throw tErr;
 
     res.json({
       schedule,
       seat_map: schedule.buses?.seat_map || [],
-      taken: (taken || []).map((t) => t.seat_no),
+      taken: (taken || []).filter((t) => seatIsLive(t.bookings)).map((t) => t.seat_no),
     });
   } catch (e) {
     next(e);
