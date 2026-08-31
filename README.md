@@ -159,8 +159,10 @@ hit "email rate limit exceeded".
 5. The confirmation page and "My bookings" can download the ticket from
    `GET /api/bookings/:id/ticket`, which returns a PDF generated with pdfkit.
 
-Pending bookings older than ten minutes are treated as expired; their seats are
-freed the next time someone books that trip.
+A `pending` booking older than ten minutes is treated as expired everywhere it is
+read: its seats drop out of the taken list and seats-left counts, "My bookings"
+shows it as `expired`, and `/pay` refuses it. The row itself is deleted the next
+time someone books that trip.
 
 
 ## Database
@@ -274,6 +276,4 @@ This is a learning project, not production software. Notable gaps:
   at the origin city, and there is no turnaround buffer between trips.
 - No email or SMS. Tickets are download only.
 - No pricing rules, discounts, or seat-level pricing (sleeper lower vs upper, etc).
-- Seat holds expire lazily (on the next booking attempt), not on a timer.
-- Search matches a single calendar day in one fixed timezone.
-```
+

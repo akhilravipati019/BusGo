@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { supabase } from '../supabase.js';
 import { verifyUser } from '../middleware/auth.js';
 import { buildTicketPdf } from '../lib/ticket.js';
+import { isHoldExpired, effectiveStatus } from '../lib/holds.js';
 
 const router = Router();
 router.use(verifyUser);
@@ -27,7 +28,7 @@ router.get('/', async (req, res, next) => {
       .eq('user_id', req.user.id)
       .order('created_at', { ascending: false });
     if (error) throw error;
-    res.json(data);
+    res.json((data || []).map((b) => ({ ...b, status: effectiveStatus(b) })));
   } catch (e) {
     next(e);
   }
@@ -95,11 +96,14 @@ router.post('/', async (req, res, next) => {
 router.post('/:id/pay', async (req, res, next) => {
   try {
     const { data: booking, error } = await supabase
-      .from('bookings').select('id, user_id, status').eq('id', req.params.id).single();
+      .from('bookings').select('id, user_id, status, created_at').eq('id', req.params.id).single();
     if (error || !booking) return res.status(404).json({ error: 'booking not found' });
     if (booking.user_id !== req.user.id) return res.status(403).json({ error: 'not your booking' });
     if (booking.status === 'cancelled') return res.status(400).json({ error: 'booking was cancelled' });
     if (booking.status === 'confirmed') return res.json({ ok: true, already: true });
+    if (isHoldExpired(booking.status, booking.created_at)) {
+      return res.status(400).json({ error: 'This seat hold has expired. Please book again.' });
+    }
 
     const paymentRef = 'MOCK-' + Math.random().toString(36).slice(2, 10).toUpperCase();
     const { data, error: uErr } = await supabase
