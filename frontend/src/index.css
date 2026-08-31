@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #f4f6f8;
+  --color-card: #ffffff;
+  --color-ink: #1c2733;
+  --color-muted: #6b7785;
+  --color-line: #e2e6ea;
+  --color-primary: #2563eb;
+  --color-primary-dark: #1d4ed8;
+  --color-danger: #dc2626;
+  --color-ok: #16a34a;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+@layer base {
+  h1 { @apply text-2xl font-bold mb-2; }
+  h2 { @apply text-xl font-bold mb-2; }
+  h3 { @apply text-lg font-semibold mb-2; }
+  h4 { @apply text-base font-semibold mb-1; }
+  a  { @apply text-primary no-underline; }
+
+  /* native form controls get a sensible default; .input can still override */
+  input:not([type="checkbox"]):not([type="radio"]), select {
+    @apply w-full rounded-lg border border-line bg-white px-3 py-2 text-sm mb-3
+           outline-none focus:border-primary focus:ring-2 focus:ring-primary/20;
+  }
+  label { @apply block text-xs text-muted mb-1; }
+
+  table { @apply w-full border-collapse text-sm; }
+  th, td { @apply text-left p-2 border-b border-line align-top; }
+
+  /* bare <button> fallback = primary button; :where() keeps specificity 0 so any
+     class on the button (.btn-ghost, .unstyled, utilities) overrides it */
+  :where(button:not(.unstyled)) {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2
+           text-sm font-medium text-white transition-colors hover:bg-primary-dark
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  :where(button.ghost)  { @apply bg-transparent text-primary border border-line hover:bg-slate-50; }
+  :where(button.danger) { @apply bg-danger text-white hover:bg-red-700; }
+  :where(button.sm)     { @apply px-3 py-1.5 text-xs; }
+}
+
+@layer components {
+  .container { @apply mx-auto w-full max-w-4xl px-4 pb-12 pt-6; }
+  .row { @apply flex flex-wrap gap-3; }
+  .row > * { @apply flex-1 min-w-[9rem]; }
+  .nav { @apply flex flex-wrap items-center gap-4 border-b border-line bg-card px-4 py-3 text-sm; }
+
+  .card {
+    @apply bg-card border border-line rounded-xl p-4 sm:p-5 mb-4;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2
+           text-sm font-medium text-white transition-colors hover:bg-primary-dark
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-ghost  { @apply bg-transparent text-primary border border-line hover:bg-slate-50; }
+  .btn-danger { @apply bg-danger text-white hover:bg-red-700; }
+  .btn-sm     { @apply px-3 py-1.5 text-xs; }
+
+  .field-label { @apply block text-xs text-muted mb-1; }
+  .input {
+    @apply w-full rounded-lg border border-line bg-white px-3 py-2 text-sm
+           outline-none focus:border-primary focus:ring-2 focus:ring-primary/20;
+  }
+
+  .link  { @apply text-primary hover:underline; }
+  .muted { @apply text-sm text-muted; }
+  .error { @apply text-sm text-danger my-2; }
+
+  .pill { @apply inline-block rounded-full px-2 py-0.5 text-xs font-semibold; }
+  .pill.confirmed { @apply bg-green-100 text-ok; }
+  .pill.pending   { @apply bg-yellow-100 text-yellow-700; }
+  .pill.cancelled { @apply bg-red-100 text-danger; }
+}
+
+/* ---- seat map (custom) ---- */
+.deck { @apply rounded-xl border border-line bg-slate-50 p-3; }
+.deck-name { @apply text-sm font-semibold mb-1; }
+.deck-front { @apply text-right text-muted pb-1 mb-2 border-b border-dashed border-line; font-size: 0.7rem; }
+.seat-row { @apply flex items-center gap-1.5 mb-1.5; }
+.aisle { @apply w-4 shrink-0; }
+.seat {
+  @apply flex items-center justify-center rounded-md border border-line bg-white
+         cursor-pointer p-0 hover:enabled:border-primary;
+  color: var(--color-ink);
+  font-size: 0.72rem;
+}
+.seat.seater  { @apply h-9 w-10; }
+.seat.sleeper { @apply h-8 w-16 rounded-lg; }
+.seat.taken   { @apply bg-slate-200 text-slate-400 border-slate-200 cursor-not-allowed hover:border-slate-200; }
+.seat.selected { @apply bg-primary text-white border-primary; }
