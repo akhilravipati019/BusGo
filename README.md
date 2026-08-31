@@ -10,23 +10,27 @@ Auth) for data and login.
 
 ## Screenshots
 
-### Passenger flow
+Passenger flow: search, results, seat selection, payment, confirmation, my bookings.
 
-| | |
-| --- | --- |
-| Search | Results |
-| ![Search form](demo_imgs/search.png) | ![Search results](demo_imgs/search-results.png) |
-| Seat selection | Payment (mock) |
-| ![Seat selection](demo_imgs/seat-selection.png) | ![Payment](demo_imgs/payment.png) |
-| Confirmation | My bookings |
-| ![Booking confirmation](demo_imgs/booking-confirmation.png) | ![My bookings](demo_imgs/my-bookings.png) |
+<p>
+  <img src="demo_imgs/search.png" width="49%" alt="Search form">
+  <img src="demo_imgs/search-results.png" width="49%" alt="Search results">
+</p>
+<p>
+  <img src="demo_imgs/seat-selection.png" width="49%" alt="Seat selection">
+  <img src="demo_imgs/payment.png" width="49%" alt="Payment (mock)">
+</p>
+<p>
+  <img src="demo_imgs/booking-confirmation.png" width="49%" alt="Booking confirmation">
+  <img src="demo_imgs/my-bookings.png" width="49%" alt="My bookings">
+</p>
 
-### Admin
+Admin: fleet, bookings.
 
-| | |
-| --- | --- |
-| Fleet | Bookings |
-| ![Admin buses](demo_imgs/admin-buses.png) | ![Admin bookings](demo_imgs/admin-bookings.png) |
+<p>
+  <img src="demo_imgs/admin-buses.png" width="49%" alt="Admin - buses">
+  <img src="demo_imgs/admin-bookings.png" width="49%" alt="Admin - bookings">
+</p>
 
 
 ## Project layout
