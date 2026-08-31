@@ -8,6 +8,27 @@ Stack: React (Vite) on the front end, Express on the back end, Supabase (Postgre
 Auth) for data and login.
 
 
+## Screenshots
+
+### Passenger flow
+
+| | |
+| --- | --- |
+| Search | Results |
+| ![Search form](demo_imgs/search.png) | ![Search results](demo_imgs/search-results.png) |
+| Seat selection | Payment (mock) |
+| ![Seat selection](demo_imgs/seat-selection.png) | ![Payment](demo_imgs/payment.png) |
+| Confirmation | My bookings |
+| ![Booking confirmation](demo_imgs/booking-confirmation.png) | ![My bookings](demo_imgs/my-bookings.png) |
+
+### Admin
+
+| | |
+| --- | --- |
+| Fleet | Bookings |
+| ![Admin buses](demo_imgs/admin-buses.png) | ![Admin bookings](demo_imgs/admin-bookings.png) |
+
+
 ## Project layout
 
 ```
